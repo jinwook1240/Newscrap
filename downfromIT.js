@@ -71,15 +71,15 @@ request(url, function(error, response, html){
       if(function(){for(var j=0;j<index.length;j++){if(index[j].sub_article[1]==undefined)return false;}return true;}){
         //console.log('ended');
 
-        for(var countindex = 0;countindex<index.length;countindex++){//countindex 끝까지 루프
+        for(var countindex = 0;countindex<index.length;countindex++){//index 끝까지 루프 : countarticle
           console.log("countindex loop");
           for(var countarticle = 0;(index[countindex].sub_article ==undefined ? false : countarticle<=(index[countindex].sub_article.length));countarticle++){//sub_article 이 undefined이거나 countarticle이 끝까지 도달할 때까지 루프
-            if(!countarticle){//countarticle을 체크
+            if(!countarticle){//countarticle을 체크(0일 경우 main을 검사)
               if(indexfind(index[countindex].main_article.title,overlapcheck)){//overlapcheck에 저장된 날짜만큼 중복을 검사함.
                 index[countindex].main_article = undefined;
                 console.log("index["+countindex+"].main_article : detected");
               }
-            }else{
+            }else{//countarticle이 0이 아닐경우
               if(indexfind(index[countindex].sub_article[countarticle-1].title,overlapcheck)){
                 index[countindex].sub_article[countarticle-1] = undefined;
                 console.log("index["+countindex+"].sub_article["+(countarticle-1)+"] : detected");
@@ -129,7 +129,11 @@ request(url, function(error, response, html){
 
     //console.log('indexfind result : '+indexfind(index[0].main_article.title,5));
 });
-function indexfind(string, duration){//duration:일 단위
+function indexfind(string, duration) {//duration:일 단위
+    /**
+    **현재 체크 중인 기사 제목을 받아서(string)
+    **duartion 동안 같은 제목이 있었는지 찾는다.
+    **/
   //console.log('find for : '+string);
   var limit = Date.today().add({days:-duration});//몇일부터?
   ////console.log('to : '+limit.toFormat('YYYYMMDD'));
@@ -163,21 +167,21 @@ function indexfind(string, duration){//duration:일 단위
       ////console.log('finding : '+path);
 
       if(fs.existsSync(datapath+path+'/'+'index.json')){
-        var index = JSON.parse(fs.readFileSync(datapath+path+'/'+'index.json'));
-        for(var loop=0;loop<index.length;loop++){//index 파일 내 항목 갯수에 따른 루프
+        var jsonindex = JSON.parse(fs.readFileSync(datapath+path+'/'+'index.json'));
+        for(var loop=0;loop<jsonindex.length;loop++){//index 파일 내 항목 갯수에 따른 루프
           ////console.log('parsed index num.0 asdf : '+JSON.stringify(index[0]));
-          if(index[loop].main_article !=undefined){
+          if(jsonindex[loop].main_article !=undefined){
             //console.log('compare : '+string+'  and  '+JSON.stringify(index[loop].main_article.title));
-            if(index[loop].main_article.title == string){return true;}//메인
+            if(jsonindex[loop].main_article.title == string){return true;}//메인
           }
-          if(index[loop].sub_article !=undefined){
-            if(index[loop].sub_article[0] !=undefined){
+          if(jsonindex[loop].sub_article !=undefined){
+            if(jsonindex[loop].sub_article[0] !=undefined){
               //console.log('compare : '+string+'  and  '+JSON.stringify(index[loop].sub_article[0]));
-              if(index[loop].sub_article[0].title == string){return true;}//서브0
+              if(jsonindex[loop].sub_article[0].title == string){return true;}//서브0
             }
-            if(index[loop].sub_article[1] !=undefined){
+            if(jsonindex[loop].sub_article[1] !=undefined){
               //console.log('compare : '+string+'  and  '+JSON.stringify(index[loop].main_article[1]));
-              if(index[loop].sub_article[1].title == string){return true;}//서브1
+              if(jsonindex[loop].sub_article[1].title == string){return true;}//서브1
             }
           }
         }

@@ -1,0 +1,9 @@
+{
+  "name": "newscrap",
+  "version": "0.0.0",
+  "description": "Newscrap",
+  "main": "app.js",
+  "author": {
+    "name": "CLP"
+  }
+}
